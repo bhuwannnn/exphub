@@ -1,11 +1,15 @@
-import type { Course } from '@/data/courses';
+import type { Course } from '@/lib/content';
 import { CourseCard } from '@/components/course-card';
 
 export function CoursesGrid({
   courses,
+  eyebrow,
+  heading,
   onViewDetails,
 }: {
   courses: Course[];
+  eyebrow: string;
+  heading: string;
   onViewDetails: (course: Course) => void;
 }) {
   return (
@@ -13,10 +17,8 @@ export function CoursesGrid({
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div>
-            <p className="eyebrow mb-3">Our courses</p>
-            <h2 className="section-heading display-font">
-              A focused catalog, not an overwhelming one.
-            </h2>
+            <p className="eyebrow mb-3">{eyebrow}</p>
+            <h2 className="section-heading display-font">{heading}</h2>
           </div>
           <span className="text-sm font-semibold text-ink/50">{courses.length} courses</span>
         </div>

@@ -1,5 +1,5 @@
 import { Star, ArrowRight } from 'lucide-react';
-import type { Course } from '@/data/courses';
+import type { Course } from '@/lib/content';
 import { useAuth } from '@/lib/auth-context';
 import { useCheckout } from '@/lib/checkout-context';
 import { Button } from '@/components/ui/button';
@@ -14,9 +14,15 @@ export function CourseCard({ course, onViewDetails }: { course: Course; onViewDe
 
   return (
     <article id={`course-${course.id}`} className="course-card scroll-mt-24">
-      <button className={`course-art ${course.art}`} onClick={onViewDetails}>
-        <span className="mono-font text-[10px] uppercase text-white/80">{course.level}</span>
-        <span className="course-art-label display-font">{course.title}</span>
+      <button
+        className={`course-art ${course.art} bg-cover bg-center`}
+        style={course.image ? { backgroundImage: `url(${course.image})` } : undefined}
+        onClick={onViewDetails}
+      >
+        <span className="mono-font text-[10px] uppercase text-white/80 drop-shadow">
+          {course.level}
+        </span>
+        <span className="course-art-label display-font drop-shadow">{course.title}</span>
       </button>
 
       <div className="p-5">

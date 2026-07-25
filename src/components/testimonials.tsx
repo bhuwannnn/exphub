@@ -1,16 +1,22 @@
 import { Star } from 'lucide-react';
-import { testimonials } from '@/data/courses';
+import type { Testimonial } from '@/lib/content';
 
 const avatarColors = ['bg-violet-500', 'bg-teal-500', 'bg-rose-500'];
 
-export function Testimonials() {
+export function Testimonials({
+  testimonials,
+  eyebrow,
+  heading,
+}: {
+  testimonials: Testimonial[];
+  eyebrow: string;
+  heading: string;
+}) {
   return (
     <section id="reviews" className="section-pad border-t border-line bg-cream">
       <div className="mx-auto max-w-7xl px-4">
-        <p className="eyebrow mb-3">Learner reviews</p>
-        <h2 className="section-heading display-font max-w-xl">
-          What our learners say after finishing a course.
-        </h2>
+        <p className="eyebrow mb-3">{eyebrow}</p>
+        <h2 className="section-heading display-font max-w-xl">{heading}</h2>
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {testimonials.map((testimonial, index) => (

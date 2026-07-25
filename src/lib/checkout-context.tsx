@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import type { Course } from '@/data/courses';
+import type { Course } from '@/lib/content';
 
 type CheckoutContextValue = {
   course: Course | null;

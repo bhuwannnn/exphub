@@ -1,5 +1,5 @@
 import { Users, PlayCircle, Star, Award, type LucideIcon } from 'lucide-react';
-import { stats, type Stat } from '@/data/courses';
+import type { Stat } from '@/lib/content';
 
 const icons: Record<Stat['icon'], LucideIcon> = {
   users: Users,
@@ -8,14 +8,20 @@ const icons: Record<Stat['icon'], LucideIcon> = {
   award: Award,
 };
 
-export function AchievementsStats() {
+export function AchievementsStats({
+  stats,
+  eyebrow,
+  heading,
+}: {
+  stats: Stat[];
+  eyebrow: string;
+  heading: string;
+}) {
   return (
     <section id="achievements" className="section-pad bg-ink">
       <div className="mx-auto max-w-7xl px-4">
-        <p className="eyebrow !text-white/50">Why learners pick ExpHub</p>
-        <h2 className="section-heading display-font mt-3 max-w-xl text-white">
-          Small enough to care, proven enough to trust.
-        </h2>
+        <p className="eyebrow !text-white/50">{eyebrow}</p>
+        <h2 className="section-heading display-font mt-3 max-w-xl text-white">{heading}</h2>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat) => {

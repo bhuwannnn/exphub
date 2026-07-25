@@ -46,6 +46,27 @@
     letter-spacing: 0.02em;
   }
 
+  .admin-input {
+    width: 100%;
+    height: 2.5rem;
+    border-radius: 0.65rem;
+    border: 1px solid var(--color-line);
+    padding: 0 0.85rem;
+    font-size: 0.875rem;
+    background: #fff;
+  }
+
+  .admin-input:focus {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 1px;
+  }
+
+  textarea.admin-input {
+    height: auto;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+
   .eyebrow {
     font-family: var(--font-display);
     font-size: 0.72rem;

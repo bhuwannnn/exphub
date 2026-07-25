@@ -1,5 +1,5 @@
 import { X, Star, ArrowRight } from 'lucide-react';
-import type { Course } from '@/data/courses';
+import type { Course } from '@/lib/content';
 import { useAuth } from '@/lib/auth-context';
 import { useCheckout } from '@/lib/checkout-context';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,10 @@ export function CourseDetailsModal({ course, onClose }: { course: Course; onClos
         className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white sm:rounded-3xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className={`course-art ${course.art} !aspect-[16/9] rounded-t-3xl sm:rounded-t-3xl`}>
+        <div
+          className={`course-art ${course.art} !aspect-[16/9] rounded-t-3xl bg-cover bg-center sm:rounded-t-3xl`}
+          style={course.image ? { backgroundImage: `url(${course.image})` } : undefined}
+        >
           <button
             onClick={onClose}
             className="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-white/90 text-ink"
@@ -29,8 +32,10 @@ export function CourseDetailsModal({ course, onClose }: { course: Course; onClos
           >
             <X size={15} />
           </button>
-          <span className="mono-font text-[10px] uppercase text-white/80">{course.level}</span>
-          <span className="course-art-label display-font">{course.title}</span>
+          <span className="mono-font text-[10px] uppercase text-white/80 drop-shadow">
+            {course.level}
+          </span>
+          <span className="course-art-label display-font drop-shadow">{course.title}</span>
         </div>
 
         <div className="p-6">

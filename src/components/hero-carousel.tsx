@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, CornerDownRight } from 'lucide-react';
-import { banners } from '@/data/courses';
+import type { Banner } from '@/lib/content';
 
 const SLIDE_DURATION = 4000;
 
@@ -9,21 +9,29 @@ function scrollToCourse(courseId: string) {
   target?.scrollIntoView({ behavior: 'smooth' });
 }
 
-export function HeroCarousel() {
+export function HeroCarousel({ banners, eyebrow }: { banners: Banner[]; eyebrow: string }) {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused) return;
+    if (active >= banners.length) setActive(0);
+  }, [banners.length, active]);
+
+  useEffect(() => {
+    if (paused || banners.length < 2) return;
     const timer = setTimeout(() => {
       setActive((current) => (current + 1) % banners.length);
     }, SLIDE_DURATION);
     return () => clearTimeout(timer);
-  }, [active, paused]);
+  }, [active, paused, banners.length]);
+
+  if (banners.length === 0) return null;
 
   return (
     <section className="bg-cream pb-10 pt-6">
       <div className="mx-auto max-w-7xl px-4">
+        <p className="eyebrow mb-5 text-center">{eyebrow}</p>
+
         {/* Wide landscape promo banner, full-bleed within the container */}
         <div
           className="relative aspect-[21/8] w-full overflow-hidden rounded-3xl shadow-lg sm:aspect-[21/6]"
@@ -33,11 +41,12 @@ export function HeroCarousel() {
           {banners.map((banner, index) => (
             <div
               key={banner.id}
-              className={`banner-art ${banner.art} absolute inset-0 flex items-center justify-between px-6 py-5 transition-opacity duration-500 sm:px-10 ${
+              className={`banner-art ${banner.art} absolute inset-0 flex items-center justify-between bg-cover bg-center px-6 py-5 transition-opacity duration-500 sm:px-10 ${
                 index === active ? 'opacity-100' : 'pointer-events-none opacity-0'
               }`}
+              style={banner.image ? { backgroundImage: `url(${banner.image})` } : undefined}
             >
-              <div>
+              <div className={banner.image ? 'rounded-2xl bg-black/35 p-4 backdrop-blur-sm' : ''}>
                 <span className="mono-font w-fit rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-ink sm:text-xs">
                   {banner.badge}
                 </span>
