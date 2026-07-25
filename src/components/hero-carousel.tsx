@@ -46,7 +46,11 @@ export function HeroCarousel({ banners, eyebrow }: { banners: Banner[]; eyebrow:
               }`}
               style={banner.image ? { backgroundImage: `url(${banner.image})` } : undefined}
             >
-              <div className={banner.image ? 'rounded-2xl bg-black/35 p-4 backdrop-blur-sm' : ''}>
+              {banner.image && (
+                <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-transparent" />
+              )}
+
+              <div className="relative">
                 <span className="mono-font w-fit rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-ink sm:text-xs">
                   {banner.badge}
                 </span>
