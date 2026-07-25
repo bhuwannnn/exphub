@@ -19,9 +19,6 @@ export function CourseCard({ course, onViewDetails }: { course: Course; onViewDe
         style={course.image ? { backgroundImage: `url(${course.image})` } : undefined}
         onClick={onViewDetails}
       >
-        <span className="mono-font text-[10px] uppercase text-white/80 drop-shadow">
-          {course.level}
-        </span>
         <span className="course-art-label display-font drop-shadow">{course.title}</span>
       </button>
 

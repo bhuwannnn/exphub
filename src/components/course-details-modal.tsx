@@ -32,9 +32,6 @@ export function CourseDetailsModal({ course, onClose }: { course: Course; onClos
           >
             <X size={15} />
           </button>
-          <span className="mono-font text-[10px] uppercase text-white/80 drop-shadow">
-            {course.level}
-          </span>
           <span className="course-art-label display-font drop-shadow">{course.title}</span>
         </div>
 
