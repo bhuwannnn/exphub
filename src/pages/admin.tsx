@@ -7,9 +7,10 @@ import { AdminCourses } from '@/components/admin/admin-courses';
 import { AdminBanners } from '@/components/admin/admin-banners';
 import { AdminTestimonials } from '@/components/admin/admin-testimonials';
 import { AdminSettings } from '@/components/admin/admin-settings';
+import { AdminVideos } from '@/components/admin/admin-videos';
 import { Button } from '@/components/ui/button';
 
-const tabs = ['Courses', 'Banners', 'Reviews', 'Site text'] as const;
+const tabs = ['Courses', 'Videos', 'Banners', 'Reviews', 'Site text'] as const;
 type Tab = (typeof tabs)[number];
 
 function AdminLogin() {
@@ -141,6 +142,7 @@ export default function Admin() {
 
       <main className="mx-auto max-w-5xl px-4 py-8">
         {tab === 'Courses' && <AdminCourses />}
+        {tab === 'Videos' && <AdminVideos />}
         {tab === 'Banners' && <AdminBanners />}
         {tab === 'Reviews' && <AdminTestimonials />}
         {tab === 'Site text' && <AdminSettings />}

@@ -1,18 +1,14 @@
 import { X, Star, ArrowRight } from 'lucide-react';
 import type { Course } from '@/lib/content';
-import { useAuth } from '@/lib/auth-context';
-import { useCheckout } from '@/lib/checkout-context';
+import { useEnrollFlow } from '@/lib/use-enroll-flow';
 import { Button } from '@/components/ui/button';
 
 export function CourseDetailsModal({ course, onClose }: { course: Course; onClose: () => void }) {
-  const { requireAuth } = useAuth();
-  const { openCheckout } = useCheckout();
+  const enroll = useEnrollFlow(course);
 
-  function handleBuyNow() {
-    requireAuth(() => {
-      openCheckout(course);
-      onClose();
-    });
+  function handleEnroll() {
+    enroll();
+    onClose();
   }
 
   return (
@@ -56,8 +52,8 @@ export function CourseDetailsModal({ course, onClose }: { course: Course; onClos
             )}
           </div>
 
-          <Button size="lg" className="mt-6 w-full" onClick={handleBuyNow}>
-            Buy now <ArrowRight size={14} />
+          <Button size="lg" className="mt-6 w-full" onClick={handleEnroll}>
+            Enroll now <ArrowRight size={14} />
           </Button>
         </div>
       </div>

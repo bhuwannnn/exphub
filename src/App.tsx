@@ -1,10 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { AuthProvider } from '@/lib/auth-context';
-import { CheckoutProvider } from '@/lib/checkout-context';
 import { ToastProvider } from '@/lib/toast-context';
+import { EnrollStatusProvider } from '@/lib/enroll-status-context';
 import Home from '@/pages/home';
 import Admin from '@/pages/admin';
+import MyCourses from '@/pages/my-courses';
+import Learn from '@/pages/learn';
 import NotFound from '@/pages/not-found';
 
 function Router() {
@@ -12,6 +14,8 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/admin" component={Admin} />
+      <Route path="/my-courses" component={MyCourses} />
+      <Route path="/learn/:courseId" component={Learn} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -24,11 +28,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <AuthProvider>
-          <CheckoutProvider>
+          <EnrollStatusProvider>
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
               <Router />
             </WouterRouter>
-          </CheckoutProvider>
+          </EnrollStatusProvider>
         </AuthProvider>
       </ToastProvider>
     </QueryClientProvider>

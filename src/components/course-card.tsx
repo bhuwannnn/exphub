@@ -1,16 +1,10 @@
 import { Star, ArrowRight } from 'lucide-react';
 import type { Course } from '@/lib/content';
-import { useAuth } from '@/lib/auth-context';
-import { useCheckout } from '@/lib/checkout-context';
+import { useEnrollFlow } from '@/lib/use-enroll-flow';
 import { Button } from '@/components/ui/button';
 
 export function CourseCard({ course, onViewDetails }: { course: Course; onViewDetails: () => void }) {
-  const { requireAuth } = useAuth();
-  const { openCheckout } = useCheckout();
-
-  function handleBuyNow() {
-    requireAuth(() => openCheckout(course));
-  }
+  const handleEnroll = useEnrollFlow(course);
 
   return (
     <article id={`course-${course.id}`} className="course-card scroll-mt-24">
@@ -51,8 +45,8 @@ export function CourseCard({ course, onViewDetails }: { course: Course; onViewDe
           </div>
         </div>
 
-        <Button className="mt-4 w-full" onClick={handleBuyNow}>
-          Buy now <ArrowRight size={13} />
+        <Button className="mt-4 w-full" onClick={handleEnroll}>
+          Enroll now <ArrowRight size={13} />
         </Button>
       </div>
     </article>

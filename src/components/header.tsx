@@ -1,4 +1,5 @@
-import { GraduationCap, User } from 'lucide-react';
+import { GraduationCap, User, LogOut } from 'lucide-react';
+import { Link } from 'wouter';
 import { useAuth } from '@/lib/auth-context';
 
 function scrollTo(id: string) {
@@ -20,7 +21,7 @@ export function Header({
   logoImage: string;
   saleBannerText: string;
 }) {
-  const { user, requireAuth, logout } = useAuth();
+  const { user, loginWithGoogle, logout } = useAuth();
 
   return (
     <>
@@ -52,16 +53,25 @@ export function Header({
           </nav>
 
           {user ? (
-            <button
-              onClick={logout}
-              className="flex h-10 items-center gap-2 rounded-full border border-line px-3.5 text-sm font-semibold text-ink hover:border-ink"
-            >
-              <User size={15} />
-              <span className="hidden sm:inline">{user.name}</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/my-courses"
+                className="hidden h-10 items-center gap-2 rounded-full border border-line px-3.5 text-sm font-semibold text-ink hover:border-ink sm:flex"
+              >
+                <User size={15} />
+                {user.user_metadata?.full_name ?? user.email}
+              </Link>
+              <button
+                onClick={logout}
+                aria-label="Sign out"
+                className="grid h-10 w-10 place-items-center rounded-full border border-line text-ink/60 hover:border-ink hover:text-ink"
+              >
+                <LogOut size={15} />
+              </button>
+            </div>
           ) : (
             <button
-              onClick={() => requireAuth(() => {})}
+              onClick={loginWithGoogle}
               className="h-10 rounded-full bg-ink px-4 text-sm font-semibold text-white hover:bg-black"
             >
               Login

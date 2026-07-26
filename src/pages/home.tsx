@@ -6,8 +6,9 @@ import { CoursesGrid } from '@/components/courses-grid';
 import { AchievementsStats } from '@/components/achievements-stats';
 import { Testimonials } from '@/components/testimonials';
 import { CourseDetailsModal } from '@/components/course-details-modal';
-import { LoginModal } from '@/components/login-modal';
-import { CheckoutModal } from '@/components/checkout-modal';
+import { ProfileFormModal } from '@/components/profile-form-modal';
+import { PendingEnrollResolver } from '@/components/pending-enroll-resolver';
+import { EnrollStatusModal } from '@/components/enroll-status-modal';
 import { useCourses, useBanners, useTestimonials, useSiteSettings, type Course } from '@/lib/content';
 
 export default function Home() {
@@ -53,8 +54,9 @@ export default function Home() {
       {activeCourse && (
         <CourseDetailsModal course={activeCourse} onClose={() => setActiveCourse(null)} />
       )}
-      <LoginModal />
-      <CheckoutModal />
+      <ProfileFormModal />
+      <PendingEnrollResolver />
+      <EnrollStatusModal />
     </div>
   );
 }

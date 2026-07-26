@@ -42,6 +42,14 @@ export type Testimonial = {
   order: number;
 };
 
+export type CourseVideo = {
+  id: string;
+  courseId: string;
+  title: string;
+  youtubeUrl: string;
+  order: number;
+};
+
 export type Stat = {
   id: string;
   label: string;
@@ -177,6 +185,25 @@ function testimonialToRow(patch: Partial<Testimonial>) {
   return row;
 }
 
+function videoFromRow(row: any): CourseVideo {
+  return {
+    id: row.id,
+    courseId: row.course_id,
+    title: row.title,
+    youtubeUrl: row.youtube_url,
+    order: row.sort_order,
+  };
+}
+
+function videoToRow(patch: Partial<CourseVideo>) {
+  const row: Record<string, unknown> = {};
+  if (patch.courseId !== undefined) row.course_id = patch.courseId;
+  if (patch.title !== undefined) row.title = patch.title;
+  if (patch.youtubeUrl !== undefined) row.youtube_url = patch.youtubeUrl;
+  if (patch.order !== undefined) row.sort_order = patch.order;
+  return row;
+}
+
 function settingsFromRow(row: any): SiteSettings {
   return {
     logoText: row.logo_text,
@@ -257,6 +284,46 @@ export function useTestimonials() {
   return useLiveTable<Testimonial>('testimonials', testimonialFromRow);
 }
 
+export function useCourseVideos(courseId: string) {
+  const [items, setItems] = useState<CourseVideo[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    async function load() {
+      const { data } = await supabase
+        .from('course_videos')
+        .select('*')
+        .eq('course_id', courseId)
+        .order('sort_order', { ascending: true });
+      if (!cancelled) {
+        setItems(data ? data.map(videoFromRow) : []);
+        setLoading(false);
+      }
+    }
+
+    load();
+
+    const channel = supabase
+      .channel(`course_videos-${courseId}-${Math.random().toString(36).slice(2)}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'course_videos', filter: `course_id=eq.${courseId}` },
+        load,
+      )
+      .subscribe();
+
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(channel);
+    };
+  }, [courseId]);
+
+  return { items, loading };
+}
+
 export function useSiteSettings() {
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
   const [loading, setLoading] = useState(true);
@@ -333,6 +400,20 @@ export const updateTestimonial = async (id: string, patch: Partial<Testimonial>)
 };
 export const deleteTestimonial = async (id: string) => {
   const { error } = await supabase.from('testimonials').delete().eq('id', id);
+  if (error) throw error;
+};
+
+export const addVideo = async (video: Omit<CourseVideo, 'id'>) => {
+  const { data, error } = await supabase.from('course_videos').insert(videoToRow(video)).select().single();
+  if (error) throw error;
+  return videoFromRow(data);
+};
+export const updateVideo = async (id: string, patch: Partial<CourseVideo>) => {
+  const { error } = await supabase.from('course_videos').update(videoToRow(patch)).eq('id', id);
+  if (error) throw error;
+};
+export const deleteVideo = async (id: string) => {
+  const { error } = await supabase.from('course_videos').delete().eq('id', id);
   if (error) throw error;
 };
 
