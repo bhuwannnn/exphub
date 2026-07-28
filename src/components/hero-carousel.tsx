@@ -33,7 +33,7 @@ export function HeroCarousel({ banners, eyebrow }: { banners: Banner[]; eyebrow:
 
         {/* Wide landscape promo banner, full-bleed within the container */}
         <div
-          className="relative aspect-[21/8] w-full overflow-hidden rounded-3xl shadow-lg sm:aspect-[21/6]"
+          className="relative aspect-[3/1] w-full overflow-hidden rounded-3xl shadow-lg"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
@@ -42,7 +42,7 @@ export function HeroCarousel({ banners, eyebrow }: { banners: Banner[]; eyebrow:
               key={banner.id}
               onClick={() => scrollToCourse(banner.courseId)}
               aria-label={banner.title || 'Banner'}
-              className={`banner-art ${banner.art} absolute inset-0 bg-cover bg-center transition-opacity duration-500 ${
+              className={`banner-art ${banner.art} absolute inset-0 bg-contain bg-center bg-no-repeat transition-opacity duration-500 ${
                 index === active ? 'opacity-100' : 'pointer-events-none opacity-0'
               }`}
               style={banner.image ? { backgroundImage: `url(${banner.image})` } : undefined}
