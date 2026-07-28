@@ -1,10 +1,13 @@
+import { Link } from 'wouter';
 import { X, Star, ArrowRight } from 'lucide-react';
 import type { Course } from '@/lib/content';
 import { useEnrollFlow } from '@/lib/use-enroll-flow';
+import { useIsEnrolled } from '@/lib/enrollment';
 import { Button } from '@/components/ui/button';
 
 export function CourseDetailsModal({ course, onClose }: { course: Course; onClose: () => void }) {
   const enroll = useEnrollFlow(course);
+  const { isEnrolled } = useIsEnrolled(course.id);
 
   function handleEnroll() {
     enroll();
@@ -54,9 +57,17 @@ export function CourseDetailsModal({ course, onClose }: { course: Course; onClos
             )}
           </div>
 
-          <Button size="lg" className="mt-6 w-full" onClick={handleEnroll}>
-            Enroll now <ArrowRight size={14} />
-          </Button>
+          {isEnrolled ? (
+            <Link href={`/learn/${course.id}`} className="mt-6 block" onClick={onClose}>
+              <Button size="lg" className="w-full">
+                Open course <ArrowRight size={14} />
+              </Button>
+            </Link>
+          ) : (
+            <Button size="lg" className="mt-6 w-full" onClick={handleEnroll}>
+              Enroll now <ArrowRight size={14} />
+            </Button>
+          )}
         </div>
       </div>
     </div>

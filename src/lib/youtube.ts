@@ -15,7 +15,14 @@ export function getYouTubeVideoId(url: string): string | null {
 
 export function getYouTubeEmbedUrl(url: string): string {
   const id = getYouTubeVideoId(url);
-  return id ? `https://www.youtube.com/embed/${id}` : url.trim();
+  if (!id) return url.trim();
+  const params = new URLSearchParams({
+    modestbranding: '1',
+    rel: '0',
+    iv_load_policy: '3',
+    color: 'white',
+  });
+  return `https://www.youtube-nocookie.com/embed/${id}?${params.toString()}`;
 }
 
 export function getYouTubeThumbnail(url: string): string {

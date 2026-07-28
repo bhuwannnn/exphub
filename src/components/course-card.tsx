@@ -1,10 +1,13 @@
+import { Link } from 'wouter';
 import { Star, ArrowRight } from 'lucide-react';
 import type { Course } from '@/lib/content';
 import { useEnrollFlow } from '@/lib/use-enroll-flow';
+import { useIsEnrolled } from '@/lib/enrollment';
 import { Button } from '@/components/ui/button';
 
 export function CourseCard({ course, onViewDetails }: { course: Course; onViewDetails: () => void }) {
   const handleEnroll = useEnrollFlow(course);
+  const { isEnrolled } = useIsEnrolled(course.id);
 
   return (
     <article id={`course-${course.id}`} className="course-card scroll-mt-24">
@@ -47,9 +50,17 @@ export function CourseCard({ course, onViewDetails }: { course: Course; onViewDe
           </div>
         </div>
 
-        <Button className="mt-4 w-full" onClick={handleEnroll}>
-          Enroll now <ArrowRight size={13} />
-        </Button>
+        {isEnrolled ? (
+          <Link href={`/learn/${course.id}`} className="mt-4 block">
+            <Button className="w-full">
+              Open course <ArrowRight size={13} />
+            </Button>
+          </Link>
+        ) : (
+          <Button className="mt-4 w-full" onClick={handleEnroll}>
+            Enroll now <ArrowRight size={13} />
+          </Button>
+        )}
       </div>
     </article>
   );

@@ -4,6 +4,7 @@ import { GraduationCap, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useEnrollments } from '@/lib/enrollment';
 import { useCourses } from '@/lib/content';
+import { Button } from '@/components/ui/button';
 
 export default function MyCourses() {
   const { user, loading: authLoading } = useAuth();
@@ -47,19 +48,29 @@ export default function MyCourses() {
             You haven&rsquo;t enrolled in any course yet. Head back to the homepage to enroll.
           </p>
         ) : (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {enrolledCourses.map((course) => (
-              <Link
-                key={course.id}
-                href={`/learn/${course.id}`}
-                className="flex items-center justify-between rounded-2xl border border-line bg-white p-5 hover:border-ink"
-              >
-                <div>
+              <article key={course.id} className="course-card">
+                <div
+                  className={`course-art ${course.art} bg-cover bg-center`}
+                  style={course.image ? { backgroundImage: `url(${course.image})` } : undefined}
+                >
+                  {!course.image && (
+                    <span className="course-art-label display-font drop-shadow">{course.title}</span>
+                  )}
+                </div>
+
+                <div className="p-5">
                   <p className="text-sm font-bold text-ink">{course.title}</p>
                   <p className="mt-1 text-xs text-ink/50">{course.duration}</p>
+
+                  <Link href={`/learn/${course.id}`} className="mt-4 block">
+                    <Button className="w-full">
+                      Open course <ArrowRight size={13} />
+                    </Button>
+                  </Link>
                 </div>
-                <ArrowRight size={16} className="text-ink/40" />
-              </Link>
+              </article>
             ))}
           </div>
         )}
