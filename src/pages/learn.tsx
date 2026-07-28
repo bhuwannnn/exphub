@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
-import { GraduationCap, PlayCircle } from 'lucide-react';
+import { GraduationCap, Play, PlayCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useIsEnrolled } from '@/lib/enrollment';
 import { useCourses, useCourseVideos } from '@/lib/content';
@@ -13,10 +13,16 @@ export default function Learn({ params }: { params: { courseId: string } }) {
   const { items: courses, loading: coursesLoading } = useCourses();
   const { items: videos, loading: videosLoading } = useCourseVideos(courseId);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [playing, setPlaying] = useState(false);
   const [, navigate] = useLocation();
 
   const course = courses.find((c) => c.id === courseId);
   const activeVideo = videos.find((v) => v.id === activeId) ?? videos[0];
+
+  function selectVideo(id: string) {
+    setActiveId(id);
+    setPlaying(false);
+  }
 
   useEffect(() => {
     if (!authLoading && !user) navigate('/');
@@ -62,16 +68,36 @@ export default function Learn({ params }: { params: { courseId: string } }) {
           <p className="mt-6 text-sm text-ink/50">No videos have been added to this course yet.</p>
         ) : (
           <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_280px]">
-            <div className="aspect-video w-full overflow-hidden rounded-2xl bg-black">
-              {activeVideo && (
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black">
+              {activeVideo && playing && (
                 <iframe
                   key={activeVideo.id}
-                  src={getYouTubeEmbedUrl(activeVideo.youtubeUrl)}
+                  src={`${getYouTubeEmbedUrl(activeVideo.youtubeUrl)}&autoplay=1`}
                   title={activeVideo.title}
                   className="h-full w-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
+              )}
+              {activeVideo && !playing && (
+                <button
+                  onClick={() => setPlaying(true)}
+                  className="group absolute inset-0"
+                  aria-label={`Play ${activeVideo.title}`}
+                >
+                  {getYouTubeThumbnail(activeVideo.youtubeUrl) && (
+                    <img
+                      src={getYouTubeThumbnail(activeVideo.youtubeUrl)}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                  <span className="absolute inset-0 grid place-items-center bg-black/25 transition-colors group-hover:bg-black/40">
+                    <span className="grid h-16 w-16 place-items-center rounded-full bg-white/95 text-brand shadow-lg transition-transform group-hover:scale-105">
+                      <Play size={26} className="ml-1" fill="currentColor" />
+                    </span>
+                  </span>
+                </button>
               )}
             </div>
 
@@ -79,7 +105,7 @@ export default function Learn({ params }: { params: { courseId: string } }) {
               {videos.map((video) => (
                 <button
                   key={video.id}
-                  onClick={() => setActiveId(video.id)}
+                  onClick={() => selectVideo(video.id)}
                   className={`flex w-full items-center gap-3 p-4 text-left text-sm font-medium ${
                     video.id === (activeVideo?.id ?? '')
                       ? 'bg-brand/5 text-brand'
