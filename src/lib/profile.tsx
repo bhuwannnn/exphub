@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 
@@ -20,7 +20,7 @@ function profileFromRow(row: any): Profile {
   };
 }
 
-type ProfileContextValue = { profile: Profile | null; loading: boolean };
+type ProfileContextValue = { profile: Profile | null; loading: boolean; refresh: () => Promise<void> };
 
 const ProfileContext = createContext<ProfileContextValue | null>(null);
 
@@ -29,25 +29,23 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(async () => {
     if (!user) {
       setProfile(null);
       setLoading(false);
       return;
     }
+    const { data } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+    setProfile(data ? profileFromRow(data) : null);
+    setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
-    let cancelled = false;
+  useEffect(() => {
     setLoading(true);
-
-    async function load() {
-      const { data } = await supabase.from('profiles').select('*').eq('id', user!.id).maybeSingle();
-      if (!cancelled) {
-        setProfile(data ? profileFromRow(data) : null);
-        setLoading(false);
-      }
-    }
-
     load();
+
+    if (!user) return;
 
     const channel = supabase
       .channel(`profile-${user.id}-${Math.random().toString(36).slice(2)}`)
@@ -59,12 +57,12 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       .subscribe();
 
     return () => {
-      cancelled = true;
       supabase.removeChannel(channel);
     };
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
-  return <ProfileContext.Provider value={{ profile, loading }}>{children}</ProfileContext.Provider>;
+  return <ProfileContext.Provider value={{ profile, loading, refresh: load }}>{children}</ProfileContext.Provider>;
 }
 
 export function useProfile() {

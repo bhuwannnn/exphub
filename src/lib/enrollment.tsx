@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 
@@ -12,7 +12,7 @@ function enrollmentFromRow(row: any): Enrollment {
   return { id: row.id, courseId: row.course_id, enrolledAt: row.enrolled_at };
 }
 
-type EnrollmentContextValue = { items: Enrollment[]; loading: boolean };
+type EnrollmentContextValue = { items: Enrollment[]; loading: boolean; refresh: () => Promise<void> };
 
 const EnrollmentContext = createContext<EnrollmentContextValue | null>(null);
 
@@ -21,25 +21,23 @@ export function EnrollmentProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<Enrollment[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(async () => {
     if (!user) {
       setItems([]);
       setLoading(false);
       return;
     }
+    const { data } = await supabase.from('enrollments').select('*').eq('user_id', user.id);
+    if (data) setItems(data.map(enrollmentFromRow));
+    setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
-    let cancelled = false;
+  useEffect(() => {
     setLoading(true);
-
-    async function load() {
-      const { data } = await supabase.from('enrollments').select('*').eq('user_id', user!.id);
-      if (!cancelled && data) {
-        setItems(data.map(enrollmentFromRow));
-        setLoading(false);
-      }
-    }
-
     load();
+
+    if (!user) return;
 
     const channel = supabase
       .channel(`enrollments-${user.id}-${Math.random().toString(36).slice(2)}`)
@@ -51,12 +49,14 @@ export function EnrollmentProvider({ children }: { children: ReactNode }) {
       .subscribe();
 
     return () => {
-      cancelled = true;
       supabase.removeChannel(channel);
     };
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
-  return <EnrollmentContext.Provider value={{ items, loading }}>{children}</EnrollmentContext.Provider>;
+  return (
+    <EnrollmentContext.Provider value={{ items, loading, refresh: load }}>{children}</EnrollmentContext.Provider>
+  );
 }
 
 export function useEnrollments() {

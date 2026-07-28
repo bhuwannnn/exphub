@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import { enrollInCourse } from '@/lib/enrollment';
+import { enrollInCourse, useEnrollments } from '@/lib/enrollment';
 
 type Status = { phase: 'loading' | 'success' | 'error'; courseTitle: string } | null;
 
@@ -13,11 +13,13 @@ const EnrollStatusContext = createContext<EnrollStatusValue | null>(null);
 
 export function EnrollStatusProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<Status>(null);
+  const { refresh } = useEnrollments();
 
   async function runEnroll(courseId: string, courseTitle: string) {
     setStatus({ phase: 'loading', courseTitle });
     try {
       await Promise.all([enrollInCourse(courseId), new Promise((resolve) => setTimeout(resolve, 1500))]);
+      await refresh();
       setStatus({ phase: 'success', courseTitle });
     } catch {
       setStatus({ phase: 'error', courseTitle });

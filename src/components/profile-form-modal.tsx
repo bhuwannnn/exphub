@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 
 export function ProfileFormModal({ onSaved }: { onSaved?: () => void }) {
   const { user, loading: authLoading } = useAuth();
-  const { profile, loading: profileLoading } = useProfile();
+  const { profile, loading: profileLoading, refresh } = useProfile();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [state, setState] = useState('');
@@ -40,6 +40,7 @@ export function ProfileFormModal({ onSaved }: { onSaved?: () => void }) {
     setSaving(true);
     try {
       await upsertProfile({ name: name.trim(), phone, state });
+      await refresh();
       setJustSaved(true);
       onSaved?.();
     } catch {
