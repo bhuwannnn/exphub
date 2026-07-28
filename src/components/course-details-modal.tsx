@@ -28,7 +28,9 @@ export function CourseDetailsModal({ course, onClose }: { course: Course; onClos
           >
             <X size={15} />
           </button>
-          <span className="course-art-label display-font drop-shadow">{course.title}</span>
+          {!course.image && (
+            <span className="course-art-label display-font drop-shadow">{course.title}</span>
+          )}
         </div>
 
         <div className="p-6">

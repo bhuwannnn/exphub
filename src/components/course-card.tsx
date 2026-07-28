@@ -13,7 +13,9 @@ export function CourseCard({ course, onViewDetails }: { course: Course; onViewDe
         style={course.image ? { backgroundImage: `url(${course.image})` } : undefined}
         onClick={onViewDetails}
       >
-        <span className="course-art-label display-font drop-shadow">{course.title}</span>
+        {!course.image && (
+          <span className="course-art-label display-font drop-shadow">{course.title}</span>
+        )}
       </button>
 
       <div className="p-5">
