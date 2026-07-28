@@ -5,6 +5,7 @@ import { ToastProvider } from '@/lib/toast-context';
 import { EnrollStatusProvider } from '@/lib/enroll-status-context';
 import Home from '@/pages/home';
 import Admin from '@/pages/admin';
+import ResetPassword from '@/pages/reset-password';
 import MyCourses from '@/pages/my-courses';
 import Learn from '@/pages/learn';
 import NotFound from '@/pages/not-found';
@@ -14,6 +15,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/admin" component={Admin} />
+      <Route path="/reset-password" component={ResetPassword} />
       <Route path="/my-courses" component={MyCourses} />
       <Route path="/learn/:courseId" component={Learn} />
       <Route component={NotFound} />
