@@ -141,9 +141,6 @@
     background: linear-gradient(135deg, #62c3f7 0%, #2a93e0 100%);
   }
 
-  .banner-art {
-    background-size: cover;
-  }
   .banner-art.violet {
     background: linear-gradient(160deg, #7c6bf5 0%, #4f46e5 55%, #2f2896 100%);
   }
