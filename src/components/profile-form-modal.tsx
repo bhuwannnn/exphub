@@ -13,8 +13,9 @@ export function ProfileFormModal({ onSaved }: { onSaved?: () => void }) {
   const [state, setState] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
 
-  const shouldShow = !authLoading && !profileLoading && !!user && !profile;
+  const shouldShow = !authLoading && !profileLoading && !!user && !profile && !justSaved;
   if (!shouldShow) return null;
 
   async function handleSubmit(event: FormEvent) {
@@ -35,6 +36,7 @@ export function ProfileFormModal({ onSaved }: { onSaved?: () => void }) {
     setSaving(true);
     try {
       await upsertProfile({ name: name.trim(), phone, state });
+      setJustSaved(true);
       onSaved?.();
     } catch {
       setError('Something went wrong, please try again.');
