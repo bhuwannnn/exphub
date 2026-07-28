@@ -4,7 +4,7 @@ import { GraduationCap, PlayCircle } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useIsEnrolled } from '@/lib/enrollment';
 import { useCourses, useCourseVideos } from '@/lib/content';
-import { getYouTubeEmbedUrl } from '@/lib/youtube';
+import { getYouTubeEmbedUrl, getYouTubeThumbnail } from '@/lib/youtube';
 
 export default function Learn({ params }: { params: { courseId: string } }) {
   const { courseId } = params;
@@ -86,7 +86,15 @@ export default function Learn({ params }: { params: { courseId: string } }) {
                       : 'text-ink hover:bg-black/5'
                   }`}
                 >
-                  <PlayCircle size={16} className="shrink-0" />
+                  {getYouTubeThumbnail(video.youtubeUrl) ? (
+                    <img
+                      src={getYouTubeThumbnail(video.youtubeUrl)}
+                      alt=""
+                      className="h-10 w-16 shrink-0 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <PlayCircle size={16} className="shrink-0" />
+                  )}
                   {video.title}
                 </button>
               ))}
