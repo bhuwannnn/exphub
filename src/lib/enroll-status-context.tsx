@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import { enrollInCourse } from '@/lib/enrollment';
 
-type Status = { phase: 'loading' | 'success'; courseTitle: string } | null;
+type Status = { phase: 'loading' | 'success' | 'error'; courseTitle: string } | null;
 
 type EnrollStatusValue = {
   status: Status;
@@ -16,8 +16,12 @@ export function EnrollStatusProvider({ children }: { children: ReactNode }) {
 
   async function runEnroll(courseId: string, courseTitle: string) {
     setStatus({ phase: 'loading', courseTitle });
-    await Promise.all([enrollInCourse(courseId), new Promise((resolve) => setTimeout(resolve, 1500))]);
-    setStatus({ phase: 'success', courseTitle });
+    try {
+      await Promise.all([enrollInCourse(courseId), new Promise((resolve) => setTimeout(resolve, 1500))]);
+      setStatus({ phase: 'success', courseTitle });
+    } catch {
+      setStatus({ phase: 'error', courseTitle });
+    }
   }
 
   return (

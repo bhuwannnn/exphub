@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { GraduationCap } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useProfile, upsertProfile } from '@/lib/profile';
@@ -14,6 +14,10 @@ export function ProfileFormModal({ onSaved }: { onSaved?: () => void }) {
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
+
+  useEffect(() => {
+    setJustSaved(false);
+  }, [user?.id]);
 
   const shouldShow = !authLoading && !profileLoading && !!user && !profile && !justSaved;
   if (!shouldShow) return null;

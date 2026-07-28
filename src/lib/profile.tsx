@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 
@@ -20,7 +20,11 @@ function profileFromRow(row: any): Profile {
   };
 }
 
-export function useProfile() {
+type ProfileContextValue = { profile: Profile | null; loading: boolean };
+
+const ProfileContext = createContext<ProfileContextValue | null>(null);
+
+export function ProfileProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -60,7 +64,13 @@ export function useProfile() {
     };
   }, [user]);
 
-  return { profile, loading };
+  return <ProfileContext.Provider value={{ profile, loading }}>{children}</ProfileContext.Provider>;
+}
+
+export function useProfile() {
+  const ctx = useContext(ProfileContext);
+  if (!ctx) throw new Error('useProfile must be used within ProfileProvider');
+  return ctx;
 }
 
 export async function upsertProfile(patch: { name: string; phone: string; state: string }) {

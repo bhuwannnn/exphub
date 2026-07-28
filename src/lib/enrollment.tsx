@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 
@@ -12,7 +12,11 @@ function enrollmentFromRow(row: any): Enrollment {
   return { id: row.id, courseId: row.course_id, enrolledAt: row.enrolled_at };
 }
 
-export function useEnrollments() {
+type EnrollmentContextValue = { items: Enrollment[]; loading: boolean };
+
+const EnrollmentContext = createContext<EnrollmentContextValue | null>(null);
+
+export function EnrollmentProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [items, setItems] = useState<Enrollment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +56,13 @@ export function useEnrollments() {
     };
   }, [user]);
 
-  return { items, loading };
+  return <EnrollmentContext.Provider value={{ items, loading }}>{children}</EnrollmentContext.Provider>;
+}
+
+export function useEnrollments() {
+  const ctx = useContext(EnrollmentContext);
+  if (!ctx) throw new Error('useEnrollments must be used within EnrollmentProvider');
+  return ctx;
 }
 
 export function useIsEnrolled(courseId: string) {

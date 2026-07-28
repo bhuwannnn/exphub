@@ -2,6 +2,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, Switch, Router as WouterRouter } from 'wouter';
 import { AuthProvider } from '@/lib/auth-context';
 import { ToastProvider } from '@/lib/toast-context';
+import { ProfileProvider } from '@/lib/profile';
+import { EnrollmentProvider } from '@/lib/enrollment';
 import { EnrollStatusProvider } from '@/lib/enroll-status-context';
 import Home from '@/pages/home';
 import Admin from '@/pages/admin';
@@ -30,11 +32,15 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <AuthProvider>
-          <EnrollStatusProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-              <Router />
-            </WouterRouter>
-          </EnrollStatusProvider>
+          <ProfileProvider>
+            <EnrollmentProvider>
+              <EnrollStatusProvider>
+                <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+                  <Router />
+                </WouterRouter>
+              </EnrollStatusProvider>
+            </EnrollmentProvider>
+          </ProfileProvider>
         </AuthProvider>
       </ToastProvider>
     </QueryClientProvider>
